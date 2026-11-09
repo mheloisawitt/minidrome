@@ -1,0 +1,22 @@
+name: Testes
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Instalar dependências
+        run: pip install -r requirements-dev.txt
+      - name: Executar testes com cobertura
+        # Meta do GQM (Quadro 7): cobertura de pelo menos 60%
+        run: pytest --cov=model --cov=core --cov=persistence --cov=adapters --cov=server --cov-report=term-missing --cov-fail-under=60
